@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendhagyó igék teszt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday learning, for a schoolkid: friendly, clear, encouraging
+   IDEA the textbook's green irregular-verb table, cut into four flashcard packs with highlighter stickers
+   PICTURE the big flashcard; on the start screen the four pack cards with their progress bars
+   COLOUR white ground, book green band, highlighter yellow / pink stickers, ok green, miss raspberry
+   TYPE Fredoka 600 display + Nunito text
+   LAYOUT green band with title and mode switch; card left, "practise" list right; phone: band, card, list */
+:root{--bg:#fff;--ink:#14211a;--mut:#4d6352;--soft:#f0f6f1;--line:#d3e2d6;--band:#2f7a3e;--btn:#2f7a3e;--ok:#1d8f45;--bad:#c92a62;--yel:#ffe14d;--pink:#ffa3c0}
+@supports (color:light-dark(#000,#fff)){
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e1711);--ink:light-dark(#14211a,#e8f1ea);--mut:light-dark(#4d6352,#9fb5a4);--soft:light-dark(#f0f6f1,#15231a);--line:light-dark(#d3e2d6,#2a3d2e);--band:light-dark(#2f7a3e,#163a1f);--btn:light-dark(#2f7a3e,#3f9a51);--ok:light-dark(#1d8f45,#4cc777);--bad:light-dark(#c92a62,#ff7aa6)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Nunito,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.hu{font-family:Fredoka,Nunito,system-ui,sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1.08;margin:0}
+.band{background:var(--band);color:#fff;padding:18px max(4vw,16px)}
+.top{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between}
+h1{font-size:clamp(26px,4vw,38px)}
+.hi{font-weight:700;opacity:.9;margin-top:2px}
+.seg{display:flex;background:rgba(255,255,255,.14);border-radius:999px;padding:4px;gap:4px}
+.seg button{border:0;border-radius:999px;background:transparent;color:#fff;font:700 15px Nunito,sans-serif;padding:0 14px;min-height:40px;cursor:pointer}
+.seg button[aria-pressed=true]{background:#fff;color:#1f5a2c}
+button:focus-visible,input:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+main{max-width:1180px;margin:0 auto;padding:24px max(4vw,16px) 48px}
+.quiz{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:start}
+.card{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,3vw,34px)}
+.row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:center;margin-bottom:6px}
+.lab{font-size:14px;color:var(--mut);font-weight:700;margin:0}
+.kind{font-size:14px;font-weight:800;color:#14211a;background:var(--yel);border-radius:999px;padding:2px 10px}
+.kind.k2{background:var(--pink)}.kind.k3{background:#9fe0b0}
+.hu{font-size:clamp(34px,6vw,56px);margin:10px 0 22px;overflow-wrap:anywhere}
+.f{display:block;margin-bottom:14px}
+.tag{display:inline-block;font-weight:800;font-size:14px;color:#14211a;padding:1px 8px;border-radius:4px;margin-bottom:6px}
+.t1{background:var(--yel)}.t2{background:var(--pink)}
+input{width:100%;font:700 22px Nunito,sans-serif;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 14px;min-height:52px}
+input.given{border-style:dashed;color:var(--mut)}
+input.ok{border-color:var(--ok);background:#e8f6ed;background:color-mix(in srgb,var(--ok) 12%,var(--bg))}
+input.bad{border-color:var(--bad);background:#fbe9ef;background:color-mix(in srgb,var(--bad) 10%,var(--bg))}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.b{border:0;border-radius:12px;font:800 17px Nunito,sans-serif;min-height:50px;padding:0 22px;cursor:pointer}
+.b1{background:var(--btn);color:#fff}.b2{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.b:hover{filter:brightness(1.08)}
+.fb{margin-top:18px;padding:14px 16px;border-radius:12px;font-size:18px;font-weight:700}
+.fb.ok{background:#e3f3e8;background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.fb.bad{background:#f9e6ec;background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.fb span{color:var(--ink);font-weight:800;white-space:nowrap}
+.fb small{display:block;margin-top:6px;font-size:16px;color:var(--ink);font-weight:700}
+.praise{display:block;margin-top:8px;font:600 22px/1.2 Fredoka,sans-serif;color:var(--ink)}
+.side{border:1px solid var(--line);border-radius:20px;padding:20px}
+@media(min-width:900px){.side{position:sticky;top:16px}}
+h2{font-size:24px;margin-bottom:6px}
+.note{color:var(--mut);font-size:15px;margin:0 0 12px}
+.chk{display:flex;align-items:center;gap:8px;font-size:15px;min-height:40px;cursor:pointer}
+.chk input{width:20px;height:20px;min-height:0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--mut);padding:6px;border-bottom:2px solid var(--line)}
+td{padding:7px 6px;border-bottom:1px solid var(--line)}
+td:nth-child(2),td:nth-child(3){font-weight:800;white-space:nowrap}
+.hide td:nth-child(2),.hide td:nth-child(3){color:transparent;background:repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 9px) center/80% 3px no-repeat}
+.empty{color:var(--mut);font-size:15px;padding:8px 0}
+.small{background:none;border:0;color:var(--mut);font:700 14px Nunito,sans-serif;text-decoration:underline;cursor:pointer;min-height:40px;padding:0}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.packs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}
+.pack{display:flex;flex-direction:column;gap:10px}
+.pack h2{font-size:28px;margin:0}
+.pack .words{color:var(--mut);font-size:15px;margin:0}
+.pack .cnt{font-weight:800;font-size:15px}
+.pack.fin{border-color:var(--ok)}
+.done{font-weight:800;color:var(--ok)}
+.intro h2{font-size:clamp(30px,5vw,44px)}
+.name{max-width:520px}
+.big{font:600 clamp(48px,9vw,80px)/1 Fredoka,sans-serif;color:var(--ok)}
+[hidden]{display:none!important}
+@media(max-width:860px){.quiz{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.packs{grid-template-columns:minmax(0,1fr)}.b{flex:1 1 auto}}
+@media(prefers-reduced-motion:no-preference){.pop{animation:pop .25s ease-out}@keyframes pop{from{transform:scale(.97);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="top">
+    <div><h1>Rendhagyó igék</h1><div class="hi" id="hi"></div></div>
+    <div class="seg" role="group" aria-label="Mit kérdezzek?" id="seg">
+      <button id="mBoth" type="button">Jelen + múlt idő</button>
+      <button id="mPast" type="button">Csak múlt idő</button>
+    </div>
+  </div>
+</header>
+
+<div id="err" hidden style="background:#c92a62;color:#fff;padding:12px 16px;font-weight:700"></div>
+<main>
+  <!-- 1. név -->
+  <div class="card name" id="vName" hidden>
+    <h2>Szia! Hogy hívnak?</h2>
+    <p class="note">A neveddel szólítalak meg, amikor ügyes vagy.</p>
+    <input id="inName" maxlength="24" autocapitalize="words" enterkeyhint="go" aria-label="Neved">
+    <p class="note" id="nameHint" hidden style="color:var(--bad);margin-top:8px">Először írd be a neved.</p>
+    <div class="btns"><button class="b b1" id="bStart" type="button">Kezdjük!</button></div>
+  </div>
+
+  <!-- 2. csomagok -->
+  <section id="vPacks" hidden>
+    <div class="intro"><h2 id="pTitle"></h2><p class="note">Válassz egy csomagot. Addig kérdezem, amíg minden szava hibátlanul megy. Amit elrontasz, pár szó múlva újra jön.</p></div>
+    <div class="packs" id="packs"></div>
+    <div class="btns" style="margin-top:20px"><button class="small" id="bName" type="button">Nem te vagy az? Név módosítása</button></div>
+  </section>
+
+  <!-- 3. kérdezés -->
+  <section class="quiz" id="vQuiz" hidden>
+    <div>
+      <div class="card" id="card">
+        <div class="row"><p class="lab" id="qPack"></p><span class="kind" id="qKind"></span></div>
+        <div class="bar" aria-hidden="true"><i id="qBar"></i></div>
+        <p class="hu" id="qHu"></p>
+        <label class="f"><span class="tag t1">jelen idő</span><input id="inBase" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"></label>
+        <label class="f"><span class="tag t2">múlt idő</span><input id="inPast" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"></label>
+        <div class="btns">
+          <button class="b b1" id="bGo" type="button">Ellenőrzés</button>
+          <button class="b b2" id="bSkip" type="button">Nem tudom</button>
+        </div>
+        <div class="fb" id="fb" hidden></div>
+      </div>
+      <div class="btns"><button class="small" id="bBack" type="button">Vissza a csomagokhoz (a haladás megmarad)</button></div>
+    </div>
+    <aside class="side">
+      <h2>Gyakorolni kell</h2>
+      <p class="note">Ami ebben a csomagban még nem megy. Ha kétszer egymás után jól tudod, lekerül innen.</p>
+      <label class="chk"><input type="checkbox" id="showAns"> Válaszok mutatása</label>
+      <table id="missTbl" class="hide"><thead><tr><th>magyar</th><th>jelen</th><th>múlt</th></tr></thead><tbody id="missBody"></tbody></table>
+      <p class="empty" id="missEmpty">Még nincs itt semmi.</p>
+    </aside>
+  </section>
+
+  <!-- 4. kész -->
+  <section class="card" id="vDone" hidden>
+    <div class="big">Kész!</div>
+    <h2 id="dTitle" style="margin-top:14px"></h2>
+    <p class="note" id="dNote" style="margin-top:8px"></p>
+    <div class="btns"><button class="b b1" id="bNext" type="button"></button><button class="b b2" id="bPacks" type="button">Vissza a csomagokhoz</button></div>
+  </section>
+</main>
+<p style="text-align:center;color:var(--mut);font-size:13px;margin:0 0 20px">v5</p>
+
+<script>
+window.addEventListener("error",function(e){var d=document.getElementById("err");if(d){d.hidden=false;d.textContent="Hiba (v5): "+(e.message||e)+" — küldd el ezt a szöveget."}});
+</script>
+<script>
+{
+const V=[["van (lenni)","be","was/were"],["legyőz, megver","beat","beat"],["válik (valamivé)","become","became"],["elkezd","begin","began"],["eltör","break","broke"],["hoz","bring","brought"],["épít","build","built"],["vesz, vásárol","buy","bought"],["elkap","catch","caught"],["választ","choose","chose"],["jön","come","came"],["kerül (valamibe)","cost","cost"],["vág","cut","cut"],["csinál","do","did"],["rajzol","draw","drew"],["iszik","drink","drank"],["vezet (autót)","drive","drove"],["eszik","eat","ate"],["esik, leesik","fall","fell"],["etet","feed","fed"],["érez","feel","felt"],["verekszik, harcol","fight","fought"],["talál","find","found"],["repül","fly","flew"],["elfelejt","forget","forgot"],["kap","get","got"],["ad","give","gave"],["megy","go","went"],["nő, növekszik","grow","grew"],["felakaszt, lóg","hang","hung"],["van neki","have","had"],["hall","hear","heard"],["üt","hit","hit"],["tart, fog","hold","held"],["megsebesít, fáj","hurt","hurt"],["megtart","keep","kept"],["tud, ismer","know","knew"],["tanul","learn","learnt/learned"],["elmegy, elhagy","leave","left"],["hagy, enged","let","let"],["fekszik","lie","lay"],["meggyújt","light","lit"],["elveszít","lose","lost"],["készít","make","made"],["jelent","mean","meant"],["találkozik","meet","met"],["fizet","pay","paid"],["tesz","put","put"],["olvas","read","read"],["lovagol, biciklizik","ride","rode"],["cseng, csenget","ring","rang"],["fut","run","ran"],["mond","say","said"],["lát","see","saw"],["elad","sell","sold"],["küld","send","sent"],["mutat","show","showed"],["énekel","sing","sang"],["ül","sit","sat"],["alszik","sleep","slept"],["beszél","speak","spoke"],["betűz","spell","spelt/spelled"],["költ (pénzt), tölt (időt)","spend","spent"],["áll","stand","stood"],["úszik","swim","swam"],["visz, elvesz","take","took"],["tanít","teach","taught"],["elmond, elmesél","tell","told"],["gondol","think","thought"],["dob","throw","threw"],["megért","understand","understood"],["felébred","wake","woke"],["visel, hord","wear","wore"],["nyer","win","won"],["ír","write","wrote"]];
+const KEY="rendhagyo-igek-v2";
+const PACKS=[[0,19],[19,38],[38,57],[57,75]].map(([a,b])=>Array.from({length:b-a},(_,k)=>a+k));
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const gap=()=>3+Math.floor(Math.random()*2);
+const newW=()=>V.map(()=>({m:0,x:0,s:0}));
+let S;
+
+const norm=s=>s.toLowerCase().replace(/\s+/g," ").replace(/^to /,"").replace(/[.!?,;]+$/,"").trim();
+const match=(given,exp)=>{const alts=exp.split("/").map(norm);const p=norm(given).split("/").map(x=>x.trim()).filter(Boolean);return p.length>0&&p.every(x=>alts.includes(x))};
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(data){
+  let s=data&&Array.isArray(data.W)?data:null;
+  if(!s){try{s=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){s=null}}
+  S=s&&Array.isArray(s.W)&&s.W.length===V.length?s:{name:"",mode:"both",W:newW(),sess:null,view:"name"};
+  if(!S.name)S.view="name";
+}
+const nm=()=>S.name||"";
+const packOk=p=>PACKS[p].filter(i=>S.W[i].m).length;
+const packRange=p=>`${V[PACKS[p][0]][1]} – ${V[PACKS[p][PACKS[p].length-1]][1]}`;
+
+/* ---------- ütemező ---------- */
+function pick(){
+  const s=S.sess,last=s.cur?s.cur.i:-1;
+  const known=()=>{let k=PACKS[s.p].filter(i=>S.W[i].m&&i!==last);if(!k.length)k=V.map((_,i)=>i).filter(i=>S.W[i].m&&i!==last);return k};
+  if(s.rev>0){const k=known();s.rev--;if(k.length)return{i:rnd(k),k:"rev"}}
+  s.later.sort((a,b)=>a.d-b.d);
+  const d=s.later.findIndex(x=>x.d<=s.t&&x.i!==last);
+  if(d>=0)return{i:s.later.splice(d,1)[0].i,k:"again"};
+  if(s.fresh.length)return{i:s.fresh.shift(),k:"new"};
+  if(s.later.length){
+    const k=known();
+    if(k.length&&s.later.every(x=>x.d>s.t))return{i:rnd(k),k:"rev"};
+    let j=s.later.findIndex(x=>x.i!==last);if(j<0)j=0;
+    return{i:s.later.splice(j,1)[0].i,k:"again"};
+  }
+  return null;
+}
+function startPack(p,reset){
+  if(reset)PACKS[p].forEach(i=>S.W[i]={m:0,x:0,s:0});
+  if(!(S.sess&&S.sess.p===p&&S.sess.cur)){
+    S.sess={p,fresh:shuffle(PACKS[p].filter(i=>!S.W[i].m)),later:[],t:0,rev:0,fail:0,run:0,cur:null,phase:"ask",fb:null};
+    S.sess.cur=pick();
+  }
+  S.view=S.sess.cur?"quiz":"done";render(true);
+}
+
+/* ---------- dicséretek ---------- */
+const P_RUN=["Szuper, {n}! Már {r} jó válasz egymás után!","Ez igen, {n}! {r} találat sorban!","Nagyon megy, {n}! {r} egymás után hibátlanul!","Profi vagy, {n}! Már {r} jó egymás után!"];
+const P_LEARN=["Megtanultad, {n}! Ez a szó már a tiéd.","Ügyes vagy, {n}! Ezt most már tényleg tudod.","Szép munka, {n}! Egy újabb szó, ami már megy."];
+const P_OK=["Jó!","Helyes!","Ez az!","Pontosan!","Szép!"];
+const P_REV=["Na ugye, ez már megy!","Ezt már tudod, szuper!","Látod, ez megy!"];
+const fill=t=>t.replace("{n}",esc(nm())).replace("{r}",S.sess.run);
+const RUNS=[3,5,8,10,15,20,25,30,40,50];
+
+function answer(skip){
+  const s=S.sess,{i,k}=s.cur,[,base,past]=V[i],w=S.W[i];
+  const bv=S.mode==="past"?base:$("inBase").value,pv=$("inPast").value;
+  if(!skip&&!bv.trim()&&!pv.trim())return;
+  const okB=!skip&&(S.mode==="past"||match(bv,base)),okP=!skip&&match(pv,past),ok=okB&&okP;
+  s.t++;
+  let msg="",extra="";
+  if(ok){
+    w.s++;s.run++;s.fail=0;
+    let learned=false;
+    if(k!=="rev"){const need=w.x?2:1;if(w.s>=need){learned=!w.m&&w.x;w.m=1}else{s.later.push({i,d:s.t+gap()});extra="Jó! Pár szó múlva még egyszer megkérdezem, hogy biztos legyen."}}
+    if(learned)msg=fill(rnd(P_LEARN));
+    else if(RUNS.includes(s.run))msg=fill(rnd(P_RUN));
+    s.fb={ok:true,okB,okP,b:bv,p:pv,head:extra?"":(k==="rev"?rnd(P_REV):rnd(P_OK)),msg,extra};
+  }else{
+    w.m=0;w.x=1;w.s=0;s.run=0;s.fail++;
+    s.later=s.later.filter(x=>x.i!==i);s.later.push({i,d:s.t+gap()});
+    if(s.fail>=3){s.rev=2;s.fail=0;extra=`Semmi baj, ${esc(nm())}! Most jön pár olyan, amit már tudsz.`}
+    s.fb={ok:false,okB,okP,b:skip&&S.mode!=="past"?"":bv,p:skip?"":pv,skip,extra};
+  }
+  s.phase="fb";render();
+}
+function next(){
+  const s=S.sess;
+  const fin=PACKS[s.p].every(i=>S.W[i].m)&&!s.later.length;
+  if(fin){s.cur=null;S.view="done";render(true);return}
+  s.cur=pick();s.phase="ask";s.fb=null;
+  if(!s.cur){S.view="done"}
+  render(true);
+}
+
+/* ---------- megjelenítés ---------- */
+function show(v){for(const id of["vName","vPacks","vQuiz","vDone"])$(id).hidden=id!==v}
+function render(pop){
+  $("mBoth").setAttribute("aria-pressed",S.mode==="both");
+  $("mPast").setAttribute("aria-pressed",S.mode==="past");
+  $("hi").textContent=S.name?`Szia, ${S.name}!`:"";
+  $("seg").hidden=S.view==="name";
+  if(S.view==="name"){show("vName");if(!$("inName").value)$("inName").value=S.name||"";setTimeout(()=>$("inName").focus(),0)}
+  else if(S.view==="packs")renderPacks();
+  else if(S.view==="quiz")renderQuiz(pop);
+  else renderDone();
+  save();
+}
+function renderPacks(){
+  show("vPacks");
+  const all=PACKS.every((_,p)=>packOk(p)===PACKS[p].length);
+  $("pTitle").textContent=all?`Mind a 75 ige megy, ${S.name}! Bármelyiket újra gyakorolhatod.`:`Melyik csomagot gyakoroljuk, ${S.name}?`;
+  $("packs").innerHTML=PACKS.map((ws,p)=>{
+    const ok=packOk(p),fin=ok===ws.length,cont=S.sess&&S.sess.p===p&&S.sess.cur;
+    const lbl=fin?"Újra gyakorlom":cont?"Folytatom":ok?"Folytatom":"Gyakorlom";
+    return `<div class="card pack${fin?" fin":""}"><h2>${p+1}. csomag</h2><p class="words">${ws.length} ige: ${esc(packRange(p))}</p>
+      <div class="bar"><i style="width:${Math.round(ok/ws.length*100)}%"></i></div>
+      <div class="cnt">${fin?'<span class="done">Kész, mind megy!</span>':`${ok} / ${ws.length} megy`}</div>
+      <div class="btns"><button class="b ${fin?"b2":"b1"}" type="button" data-p="${p}" data-r="${fin?1:0}">${lbl}</button></div></div>`}).join("");
+}
+function renderQuiz(pop){
+  show("vQuiz");
+  const s=S.sess,{i,k}=s.cur,[hu,base,past]=V[i],w=S.W[i];
+  const ok=packOk(s.p),n=PACKS[s.p].length;
+  $("qPack").textContent=`${s.p+1}. csomag · ${ok} / ${n} megy`;
+  $("qBar").style.width=Math.round(ok/n*100)+"%";
+  const kk=$("qKind");
+  if(k==="rev"){kk.textContent="Ezt már tudod";kk.className="kind k3"}
+  else if(k==="again"&&w.s>=1){kk.textContent="Még egyszer, hogy biztos legyen";kk.className="kind"}
+  else if(k==="again"){kk.textContent="Próbáld újra";kk.className="kind k2"}
+  else{kk.textContent="Új szó";kk.className="kind"}
+  $("qHu").textContent=hu;
+  const b=$("inBase"),p=$("inPast"),fb=$("fb");
+  if(s.phase==="ask"){
+    b.className=S.mode==="past"?"given":"";p.className="";
+    b.value=S.mode==="past"?base:"";p.value="";b.readOnly=S.mode==="past";p.readOnly=false;
+    fb.hidden=true;$("bGo").textContent="Ellenőrzés";$("bSkip").hidden=false;
+    if(pop){$("card").classList.remove("pop");void $("card").offsetWidth;$("card").classList.add("pop")}
+    setTimeout(()=>(S.mode==="past"?p:b).focus({preventScroll:true}),0);
+  }else{
+    const F=s.fb||{};
+    b.value=F.b||"";p.value=F.p||"";b.readOnly=true;p.readOnly=true;
+    b.className=S.mode==="past"?"given":(F.okB?"ok":"bad");p.className=F.okP?"ok":"bad";
+    fb.hidden=false;fb.className="fb "+(F.ok?"ok":"bad");
+    const ans=`<span>${esc(base)} – ${esc(past)}</span>`;
+    fb.innerHTML=F.ok
+      ?`${F.extra?esc(F.extra):esc(F.head)+" "+ans}${F.msg?`<b class="praise">${F.msg}</b>`:""}`
+      :`${F.skip?"Semmi gond.":"Nem egészen."} A helyes: ${ans}<small>Pár szó múlva újra megkérdezem.</small>${F.extra?`<b class="praise">${F.extra}</b>`:""}`;
+    $("bGo").textContent="Tovább";$("bSkip").hidden=true;
+    setTimeout(()=>$("bGo").focus({preventScroll:true}),0);
+  }
+  const m=PACKS[s.p].filter(j=>S.W[j].x&&!S.W[j].m);
+  const extraM=s.later.map(x=>x.i).filter(j=>!PACKS[s.p].includes(j)&&!S.W[j].m);
+  const list=[...m,...extraM];
+  $("missBody").innerHTML=list.map(j=>`<tr><td>${esc(V[j][0])}</td><td>${esc(V[j][1])}</td><td>${esc(V[j][2])}</td></tr>`).join("");
+  $("missEmpty").hidden=list.length>0;$("missTbl").hidden=!list.length;
+  $("missTbl").classList.toggle("hide",!$("showAns").checked);
+}
+function renderDone(){
+  show("vDone");
+  const p=S.sess?S.sess.p:0,all=PACKS.every((_,q)=>packOk(q)===PACKS[q].length);
+  $("dTitle").textContent=all?`Fantasztikus, ${S.name}! Mind a 75 rendhagyó ige megy!`:`Ügyes vagy, ${S.name}! ${p===0?"Az":"A"} ${p+1}. csomag mind a ${PACKS[p].length} igéje hibátlanul megy.`;
+  $("dNote").textContent=all?"Ha szeretnéd, bármelyik csomagot újra átnézheted.":"Pihenj egy kicsit, vagy jöhet a következő csomag.";
+  const nx=[1,2,3,0].map(d=>(p+d)%4).find(q=>packOk(q)<PACKS[q].length);
+  $("bNext").hidden=nx===undefined;
+  if(nx!==undefined){$("bNext").textContent=`Jöhet ${nx===0?"az":"a"} ${nx+1}. csomag`;$("bNext").dataset.p=nx}
+}
+
+/* ---------- események ---------- */
+const goName=()=>{const v=$("inName").value.trim();if(!v){$("nameHint").hidden=false;$("inName").focus();return}S.name=v;S.view="packs";render()};
+let lastTap=0;
+document.addEventListener("pointerdown",()=>{lastTap=0},true);
+document.addEventListener("click",e=>{if(Date.now()-lastTap<700){e.stopPropagation();e.preventDefault()}},true);
+const tap=(el,fn)=>{el.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;e.preventDefault();lastTap=Date.now();fn()});el.addEventListener("click",()=>fn())};
+tap($("bStart"),goName);
+$("inName").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();goName()}});
+$("packs").addEventListener("click",e=>{const t=e.target.closest("button[data-p]");if(t)startPack(+t.dataset.p,t.dataset.r==="1")});
+const go=()=>{if(S.sess.phase==="fb")next();else answer(false)};
+tap($("bGo"),go);
+$("inPast").addEventListener("keydown",e=>{if(e.key==="Enter"&&S.sess.phase==="ask"){e.preventDefault();go()}});
+$("inBase").addEventListener("keydown",e=>{if(e.key==="Enter"&&S.sess.phase==="ask"){e.preventDefault();$("inPast").focus()}});
+tap($("bSkip"),()=>{if(S.sess.phase==="ask")answer(true)});
+$("bBack").addEventListener("click",()=>{S.view="packs";render()});
+$("bPacks").addEventListener("click",()=>{S.view="packs";render()});
+$("bNext").addEventListener("click",()=>startPack(+$("bNext").dataset.p,false));
+$("bName").addEventListener("click",()=>{S.view="name";render()});
+$("showAns").addEventListener("change",()=>$("missTbl").classList.toggle("hide",!$("showAns").checked));
+const setMode=m=>{S.mode=m;if(S.view==="quiz"&&S.sess.phase==="ask")render();else{$("mBoth").setAttribute("aria-pressed",m==="both");$("mPast").setAttribute("aria-pressed",m==="past");save()}};
+$("mBoth").addEventListener("click",()=>setMode("both"));
+$("mPast").addEventListener("click",()=>setMode("past"));
+
+const start=data=>{load(data);if(S.view==="quiz"&&!(S.sess&&S.sess.cur))S.view="packs";render(true)};
+let hot=null;try{hot=window.claude&&window.claude.hot||null;if(hot&&hot.snapshot)hot.snapshot(()=>S)}catch(e){hot=null}
+if(hot&&hot.ready){try{hot.ready(start)}catch(e){start({})}}else start({});
+}
+</script>
+</body>
+</html>
