@@ -1,4 +1,4 @@
-# Rendhagyó igék
+# Rendhagyó igék (átköltözött)
 
-Angol rendhagyó igék gyakorlója (75 ige, 4 csomag). Böngészőben fut, belépés nélkül.
-A haladást a böngésző helyben menti (localStorage).
+Az oldal új helye: https://viktorhomola13.github.io/learnings/angol/rendhagyo-igek/ (repo: https://github.com/ViktorHomola13/learnings).
+Ez a repo már csak átirányít.
